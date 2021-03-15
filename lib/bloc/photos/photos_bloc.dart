@@ -42,29 +42,27 @@ class PhotosBloc extends Bloc<PhotosEvent, PhotosState> {
   Stream<PhotosState> _mapGetPhotosToState(GetPhotos event) async* {
     final currentState = state;
 
-    if (!_hasReachedLastPage(currentState)) {
-      try {
-        if (currentState is PhotosInitial) {
-          yield PhotosLoading();
+    try {
+      if (currentState is PhotosInitial || state is PhotosError || event.page != null) {
+        yield PhotosLoading();
 
-          final photos = await photosRepository.getPhotos(page: 1);
+        final photos = await photosRepository.getPhotos(page: 1);
 
-          yield PhotosLoaded(photos: photos);
-        } else if (currentState is PhotosLoaded) {
-          final photos = await photosRepository.getPhotos(
-            page: _nextPage(currentState),
-          );
+        yield PhotosLoaded(photos: photos);
+      } else if (!_hasReachedLastPage(currentState) && currentState is PhotosLoaded) {
+        final photos = await photosRepository.getPhotos(
+          page: _nextPage(currentState),
+        );
 
-          yield (photos.isEmpty)
-              ? currentState.copyWith(hasReachedLastPage: true)
-              : PhotosLoaded(
-                  photos: currentState.photos + photos,
-                );
-        }
-      } catch (e) {
-        print(e);
-        yield PhotosError(message: "Connection error occured.");
+        yield (photos.isEmpty)
+            ? currentState.copyWith(hasReachedLastPage: true)
+            : PhotosLoaded(
+                photos: currentState.photos + photos,
+              );
       }
+    } catch (e) {
+      print(e);
+      yield PhotosError(message: "Connection error occured.");
     }
   }
 

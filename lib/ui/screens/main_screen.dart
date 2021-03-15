@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../bloc/photos/photos_bloc.dart';
+import '../widgets/widgets.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key, this.title}) : super(key: key);
@@ -15,13 +16,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _scrollController = ScrollController();
-  final _scrollThreshold = 200.0;
+  int _selectedIndex = 0;
+
+  final List<Widget> _tabs = <Widget>[
+    PhotosTab(),
+    Text(
+      'Index 1: Favorites',
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
     BlocProvider.of<PhotosBloc>(context).add(GetPhotos());
   }
 
@@ -31,75 +43,22 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: BlocBuilder<PhotosBloc, PhotosState>(
-        builder: (context, state) {
-          if (state is PhotosLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is PhotosLoaded) {
-            return StaggeredGridView.builder(
-              gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 100,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                staggeredTileBuilder: (int index) => StaggeredTile.fit(2),
-                staggeredTileCount: state.photos.length,
-              ),
-              controller: _scrollController,
-              itemCount: state.photos.length,
-              padding: EdgeInsets.only(top: 5, left: 5, right: 5),
-              itemBuilder: (BuildContext context, int index) => Stack(
-                children: [
-                  Image.network(
-                    state.photos[index].urlThumb,
-                  ),
-                  Positioned(
-                    bottom: 3,
-                    left: 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[700].withOpacity(0.5),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 2,
-                        ),
-                        child: Text(
-                          state.photos[index].author,
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            );
-          }
-          return Container();
-        },
+      body: _tabs.elementAt(_selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view),
+            label: 'Explore',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star),
+            label: 'Favorites',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    if (maxScroll - currentScroll <= _scrollThreshold) {
-      BlocProvider.of<PhotosBloc>(context).add(GetPhotos());
-    }
   }
 }

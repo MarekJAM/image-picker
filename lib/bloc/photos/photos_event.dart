@@ -4,8 +4,12 @@ part of 'photos_bloc.dart';
 abstract class PhotosEvent {}
 
 class GetPhotos extends PhotosEvent {
+  final int page;
+
+  GetPhotos({this.page});
+
   @override
-  String toString() => 'GetPhotos';
+  String toString() => 'GetPhotos, page $page';
 }
 
 class SearchPhotos extends PhotosEvent {
