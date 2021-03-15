@@ -29,7 +29,7 @@ class PhotosApiClient {
       throw Exception();
     }
 
-    final data = jsonDecode(response.body) as List;
+    final data = jsonDecode(utf8.decode(response.body.codeUnits)) as List;
 
     return data.map((rawPhoto) {
       return Photo.fromJson(rawPhoto);
@@ -45,7 +45,7 @@ class PhotosApiClient {
       throw Exception();
     }
 
-    final data = jsonDecode(response.body)['results'] as List;
+    final data = jsonDecode(utf8.decode(response.body.codeUnits))['results'] as List;
 
     return data.map((rawPhoto) {
       return Photo.fromJson(rawPhoto);
