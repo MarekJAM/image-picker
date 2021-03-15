@@ -15,9 +15,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final _scrollController = ScrollController();
+  final _scrollThreshold = 200.0;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     BlocProvider.of<PhotosBloc>(context).add(GetPhotos());
   }
 
@@ -42,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
                 staggeredTileBuilder: (int index) => StaggeredTile.fit(2),
                 staggeredTileCount: state.photos.length,
               ),
+              controller: _scrollController,
               itemCount: state.photos.length,
               padding: EdgeInsets.only(top: 5, left: 5, right: 5),
               itemBuilder: (BuildContext context, int index) => Stack(
@@ -82,5 +87,19 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll - currentScroll <= _scrollThreshold) {
+      BlocProvider.of<PhotosBloc>(context).add(GetPhotos());
+    }
   }
 }

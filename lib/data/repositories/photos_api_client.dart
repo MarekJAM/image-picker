@@ -6,13 +6,13 @@ import 'package:http/http.dart' as http;
 
 import '../models/photo.dart';
 import '../../configurable/api_keys.dart';
+import '../../configurable/api_config.dart';
 
 class PhotosApiClient {
   static const baseUrl = 'https://api.unsplash.com';
   static const Map<String, String> headers = {
     "Authorization": "Client-ID ${ApiKeys.accessKey}"
   };
-  static const pageSize = '30';
 
   final http.Client httpClient;
 
@@ -20,10 +20,10 @@ class PhotosApiClient {
     @required this.httpClient,
   }) : assert(httpClient != null);
 
-  Future<List<Photo>> getPhotos() async {
-    final searchImagesUrl = '$baseUrl/photos/?per_page=$pageSize';
+  Future<List<Photo>> getPhotos({int page}) async {
+    final url = '$baseUrl/photos/?per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
-    final response = await httpClient.get(searchImagesUrl, headers: headers);
+    final response = await httpClient.get(url, headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception();
@@ -36,10 +36,10 @@ class PhotosApiClient {
     }).toList();
   }
 
-  Future<List<Photo>> searchPhotos({String query}) async {
-    final searchImagesUrl = '$baseUrl/search/photos/?query=smoke&per_page=$pageSize';
+  Future<List<Photo>> searchPhotos({String query, int page}) async {
+    final url = '$baseUrl/search/photos/?query=$query&per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
-    final response = await httpClient.get(searchImagesUrl, headers: headers);
+    final response = await httpClient.get(url, headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception();

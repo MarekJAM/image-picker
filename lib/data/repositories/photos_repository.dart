@@ -11,11 +11,11 @@ class PhotosRepository {
   PhotosRepository({@required this.photosApiClient})
       : assert(photosApiClient != null);
 
-  Future<List<Photo>> getPhotos({String query}) async {
-    return await photosApiClient.getPhotos();
+  Future<List<Photo>> getPhotos({int page}) async {
+    return await photosApiClient.getPhotos(page: page);
   }
 
-  Future<List<Photo>> searchPhotos({String query}) async {
-    return await photosApiClient.searchPhotos(query: query);
+  Future<List<Photo>> searchPhotos({String query, int page}) async {
+    return await photosApiClient.searchPhotos(query: query, page: page);
   }
 }
