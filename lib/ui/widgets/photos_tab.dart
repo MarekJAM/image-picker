@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../bloc/photos/photos_bloc.dart';
+import 'widgets.dart';
 
 class PhotosTab extends StatefulWidget {
   @override
@@ -120,27 +121,8 @@ class _PhotosTabState extends State<PhotosTab> {
                     ),
                   );
                 } else if (state is PhotosError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error,
-                          size: 40,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Something went wrong!',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                            onPressed: () {
-                              getPhotos();
-                            },
-                            child: Text('Retry'))
-                      ],
-                    ),
+                  return CenterErrorInfo(
+                    onButtonPressed: getPhotos,
                   );
                 }
                 return Container();
@@ -171,3 +153,4 @@ class _PhotosTabState extends State<PhotosTab> {
     }
   }
 }
+

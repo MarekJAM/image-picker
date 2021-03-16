@@ -19,9 +19,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _tabs = <Widget>[
     PhotosTab(),
-    Text(
-      'Index 1: Favorites',
-    ),
+    FavoritesTab(),
   ];
 
   void _onItemTapped(int index) {
