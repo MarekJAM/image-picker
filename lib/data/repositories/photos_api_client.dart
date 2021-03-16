@@ -36,7 +36,7 @@ class PhotosApiClient {
     }).toList();
   }
 
-  Future<List<Photo>> searchPhotos({String query, int page}) async {
+  Future<List<Photo>> searchPhotos({@required String query, int page}) async {
     final url = '$baseUrl/search/photos/?query=$query&per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
     final response = await httpClient.get(url, headers: headers);

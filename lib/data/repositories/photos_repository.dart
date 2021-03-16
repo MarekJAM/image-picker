@@ -15,7 +15,7 @@ class PhotosRepository {
     return await photosApiClient.getPhotos(page: page);
   }
 
-  Future<List<Photo>> searchPhotos({String query, int page}) async {
+  Future<List<Photo>> searchPhotos({@required String query, int page}) async {
     return await photosApiClient.searchPhotos(query: query, page: page);
   }
 }

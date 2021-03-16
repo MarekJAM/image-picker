@@ -5,18 +5,10 @@ abstract class PhotosEvent {}
 
 class GetPhotos extends PhotosEvent {
   final int page;
-
-  GetPhotos({this.page});
-
-  @override
-  String toString() => 'GetPhotos, page $page';
-}
-
-class SearchPhotos extends PhotosEvent {
   final String query;
 
-  SearchPhotos({this.query});
+  GetPhotos({this.page, this.query = ''});
 
   @override
-  String toString() => 'GetPhotos $query';
+  String toString() => 'GetPhotos, page $page, query $query';
 }

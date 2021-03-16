@@ -32,9 +32,9 @@ class PhotosBloc extends Bloc<PhotosEvent, PhotosState> {
   Stream<PhotosState> mapEventToState(
     PhotosEvent event,
   ) async* {
-    if (event is GetPhotos) {
+    if (event is GetPhotos && event.query.isEmpty) {
       yield* _mapGetPhotosToState(event);
-    } else if (event is SearchPhotos) {
+    } else if (event is GetPhotos && event.query.isNotEmpty) {
       yield* _mapSearchPhotosToState(event);
     }
   }
@@ -66,15 +66,31 @@ class PhotosBloc extends Bloc<PhotosEvent, PhotosState> {
     }
   }
 
-  Stream<PhotosState> _mapSearchPhotosToState(SearchPhotos event) async* {
-    yield PhotosLoading();
-    try {
-      final photos = await photosRepository.searchPhotos(
-        query: event.query,
-        page: 1,
-      );
+  Stream<PhotosState> _mapSearchPhotosToState(GetPhotos event) async* {
+    final currentState = state;
 
-      yield PhotosLoaded(photos: photos);
+    try {
+      if (currentState is PhotosInitial || state is PhotosError || event.page != null) {
+        yield PhotosLoading();
+
+        final photos = await photosRepository.searchPhotos(
+          query: event.query,
+          page: 1,
+        );
+
+        yield PhotosLoaded(photos: photos);
+      } else if (!_hasReachedLastPage(currentState) && currentState is PhotosLoaded) {
+        final photos = await photosRepository.searchPhotos(
+          page: _nextPage(currentState),
+          query: event.query,
+        );
+
+        yield (photos.isEmpty)
+            ? currentState.copyWith(hasReachedLastPage: true)
+            : PhotosLoaded(
+                photos: currentState.photos + photos,
+              );
+      }
     } catch (e) {
       print(e);
       yield PhotosError(message: "Connection error occured.");
