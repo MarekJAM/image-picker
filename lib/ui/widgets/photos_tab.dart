@@ -82,8 +82,13 @@ class _PhotosTabState extends State<PhotosTab> {
                       itemCount: state.photos.length,
                       itemBuilder: (BuildContext context, int index) => Stack(
                         children: [
-                          Image.network(
-                            state.photos[index].urlThumb,
+                          GestureDetector(
+                            onTap: () {
+                              print(state.photos[index].blurHash);
+                            },
+                            child: Image.network(
+                              state.photos[index].url.thumb,
+                            ),
                           ),
                           Positioned(
                             bottom: 3,
@@ -101,7 +106,7 @@ class _PhotosTabState extends State<PhotosTab> {
                                   vertical: 2,
                                 ),
                                 child: Text(
-                                  state.photos[index].author,
+                                  state.photos[index].user.name,
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
