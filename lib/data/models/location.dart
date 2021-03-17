@@ -17,8 +17,8 @@ class Location {
 }
 
 class Position {
-  final String latitude;
-  final String longitude;
+  final double latitude;
+  final double longitude;
 
   const Position({
     this.latitude,

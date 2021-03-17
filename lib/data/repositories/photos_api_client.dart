@@ -21,7 +21,8 @@ class PhotosApiClient {
   }) : assert(httpClient != null);
 
   Future<List<Photo>> getPhotos({int page}) async {
-    final url = '$baseUrl/photos/?per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
+    final url =
+        '$baseUrl/photos/?per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
     final response = await httpClient.get(url, headers: headers);
 
@@ -37,7 +38,8 @@ class PhotosApiClient {
   }
 
   Future<List<Photo>> searchPhotos({@required String query, int page}) async {
-    final url = '$baseUrl/search/photos/?query=$query&per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
+    final url =
+        '$baseUrl/search/photos/?query=$query&per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
     final response = await httpClient.get(url, headers: headers);
 
@@ -45,10 +47,26 @@ class PhotosApiClient {
       throw Exception();
     }
 
-    final data = jsonDecode(utf8.decode(response.body.codeUnits))['results'] as List;
+    final data =
+        jsonDecode(utf8.decode(response.body.codeUnits))['results'] as List;
 
     return data.map((rawPhoto) {
       return Photo.fromJson(rawPhoto);
     }).toList();
+  }
+
+  Future<Photo> getPhoto({@required String id}) async {
+    final url =
+        '$baseUrl/photos/$id';
+
+    final response = await httpClient.get(url, headers: headers);
+
+    if (response.statusCode != 200) {
+      throw Exception();
+    }
+
+    final data = jsonDecode(utf8.decode(response.body.codeUnits));
+
+    return Photo.fromJson(data);
   }
 }

@@ -35,19 +35,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => PhotosBloc(photosRepository: photosRepository),
+    return RepositoryProvider(
+      create: (context) => photosRepository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => PhotosBloc(photosRepository: photosRepository),
+          ),
+        ],
+        child: MaterialApp(
+          title: 'Image Picker',
+          theme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.blue,
+          ),
+          home: MainScreen(title: 'Image Picker'),
         ),
-      ],
-      child: MaterialApp(
-        title: 'Image Picker',
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          primarySwatch: Colors.blue,
-        ),
-        home: MainScreen(title: 'Image Picker'),
       ),
     );
   }

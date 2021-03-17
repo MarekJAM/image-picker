@@ -33,4 +33,12 @@ class Photo {
         exif: data['exif'] != null ? Exif.fromJson(data['exif']) : null,
         location: data['location'] != null ? Location.fromJson(data['location']) : null,
       );
+
+  Map<String, dynamic> toMap() => {
+    "id": id,
+    "user": user?.name,
+    "createdAt": createdAt.toIso8601String(),
+    "description": description,
+    "thumbUrl": url?.thumb,
+  };
 }

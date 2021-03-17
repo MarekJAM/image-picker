@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../bloc/photo_details/photo_details_bloc.dart';
+import '../../data/repositories/photos_repository.dart';
+import '../../ui/screens/photo_details_screen.dart';
 import '../../bloc/photos/photos_bloc.dart';
 import 'widgets.dart';
 
@@ -85,10 +88,41 @@ class _PhotosTabState extends State<PhotosTab> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              print(state.photos[index].blurHash);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return BlocProvider(
+                                      create: (context) => PhotoDetailsBloc(
+                                        photosRepository: RepositoryProvider.of<
+                                            PhotosRepository>(context),
+                                      ),
+                                      child: PhotoDetailsScreen(
+                                        id: state.photos[index].id,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: Image.network(
                               state.photos[index].url.thumb,
+                              errorBuilder: (context, exception, stackTrace) {
+                                return Container(
+                                  color: Colors.black38,
+                                  height: 120,
+                                  width: double.infinity,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.broken_image),
+                                      Text('Image unavailable')
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           Positioned(
@@ -153,4 +187,3 @@ class _PhotosTabState extends State<PhotosTab> {
     }
   }
 }
-
