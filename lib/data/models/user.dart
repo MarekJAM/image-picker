@@ -23,4 +23,15 @@ class User {
         twitterUsername: data['twitter_username'],
         portfolioUrl: data['portfolio_url'],
       );
+
+  bool isAnyFieldNotNull() {
+    return [
+      id,
+      username,
+      name,
+      instagramUsername,
+      twitterUsername,
+      portfolioUrl
+    ].any((el) => el != null);
+  }
 }

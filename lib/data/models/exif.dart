@@ -23,4 +23,15 @@ class Exif {
         focalLength: data['focal_length'],
         iso: data['iso'],
       );
+
+  bool isAnyFieldNotNull() {
+    return [
+      make,
+      model,
+      expoosureTime,
+      aperture,
+      focalLength,
+      iso,
+    ].any((el) => el != null);
+  }
 }

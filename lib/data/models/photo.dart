@@ -5,6 +5,8 @@ import 'models.dart';
 class Photo {
   final String id;
   final DateTime createdAt;
+  final int height;
+  final int width;
   final String blurHash;
   final String description;
   final User user;
@@ -15,6 +17,8 @@ class Photo {
   const Photo({
     @required this.id,
     @required this.createdAt,
+    @required this.height,
+    @required this.width,
     @required this.blurHash,
     @required this.description,
     @required this.user,
@@ -26,6 +30,8 @@ class Photo {
   factory Photo.fromJson(Map<String, dynamic> data) => Photo(
         id: data['id'],
         createdAt: DateTime.parse(data['created_at']),
+        height: data['height'],
+        width: data['width'],
         blurHash: data['blur_hash'],
         description: data['description'],
         user: data['user'] != null ? User.fromJson(data['user']) : null,
