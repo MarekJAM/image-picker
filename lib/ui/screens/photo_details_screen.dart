@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/configurable/asset_paths.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:intl/intl.dart';
 
+import '../../configurable/asset_paths.dart';
 import '../../bloc/photo_details/photo_details_bloc.dart';
 import '../../data/models/models.dart';
 
@@ -197,9 +198,18 @@ class TextDataRow extends StatelessWidget {
     return value != null
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title),
-              Text('$value'),
+              Padding(
+                padding: const EdgeInsets.only(right: 18.0),
+                child: Text(title),
+              ),
+              Expanded(
+                child: Text(
+                  '$value',
+                  textAlign: TextAlign.end,
+                ),
+              ),
             ],
           )
         : Container();
@@ -229,6 +239,24 @@ class SliverHeader extends SliverPersistentHeaderDelegate {
           child: Image.network(
             photo.url.regular,
             fit: BoxFit.fitWidth,
+            frameBuilder: (
+              BuildContext context,
+              Widget child,
+              int frame,
+              bool wasSynchronouslyLoaded,
+            ) {
+              return AnimatedCrossFade(
+                firstChild: Container(
+                  height: maxExtent,
+                  child: photo.blurHash != null ? BlurHash(hash: photo.blurHash) : Container(),
+                ),
+                secondChild: Container(width: double.infinity, child: child),
+                duration: const Duration(milliseconds: 500),
+                crossFadeState: frame == null
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+              );
+            },
           ),
         ),
         IconButton(

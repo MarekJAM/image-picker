@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../bloc/photo_details/photo_details_bloc.dart';
@@ -28,6 +29,7 @@ class _PhotosTabState extends State<PhotosTab> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
@@ -107,6 +109,7 @@ class _PhotosTabState extends State<PhotosTab> {
                             },
                             child: Image.network(
                               state.photos[index].url.thumb,
+                              fit: BoxFit.fitWidth,
                               errorBuilder: (context, exception, stackTrace) {
                                 return Container(
                                   color: Colors.black38,
@@ -121,6 +124,32 @@ class _PhotosTabState extends State<PhotosTab> {
                                       Text('Image unavailable')
                                     ],
                                   ),
+                                );
+                              },
+                              frameBuilder: (
+                                BuildContext context,
+                                Widget child,
+                                int frame,
+                                bool wasSynchronouslyLoaded,
+                              ) {
+                                return AnimatedCrossFade(
+                                  firstChild: AspectRatio(
+                                   aspectRatio: state.photos[index].width / state.photos[index].height,
+                                    child: state.photos[index].blurHash != null
+                                        ? BlurHash(
+                                            hash: state.photos[index].blurHash,
+                                            imageFit: BoxFit.fill,
+                                          )
+                                        : Container(),
+                                  ),
+                                  secondChild: Container(
+                                    width: double.infinity,
+                                    child: child,
+                                  ),
+                                  duration: const Duration(milliseconds: 500),
+                                  crossFadeState: frame == null
+                                      ? CrossFadeState.showFirst
+                                      : CrossFadeState.showSecond,
                                 );
                               },
                             ),
