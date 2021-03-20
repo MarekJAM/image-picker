@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../configurable/asset_paths.dart';
 import '../../bloc/photo_details/photo_details_bloc.dart';
 import '../../data/models/models.dart';
+import '../widgets/common/center_error_info.dart';
 
 class PhotoDetailsScreen extends StatefulWidget {
   final String id;
@@ -30,43 +31,65 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     return Scaffold(
       body: SafeArea(
-        child: BlocBuilder<PhotoDetailsBloc, PhotoDetailsState>(
-          builder: (context, state) {
-            if (state is PhotoDetailsLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is PhotoDetailsLoaded) {
-              return CustomScrollView(
-                slivers: [
-                  SliverPersistentHeader(
-                    pinned: true,
-                    floating: true,
-                    delegate: SliverHeader(
-                      photo: state.photo,
-                      minExtent: 100,
-                      maxExtent: mediaQuery.size.width *
-                          (state.photo.height / state.photo.width),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        _buildMainInfoArea(state.photo),
-                        if (state.photo.exif.isAnyFieldNotNull())
-                          ContentArea(_buildExifArea(state.photo.exif)),
-                        if (state.photo.user.isAnyFieldNotNull())
-                          ContentArea(_buildUserInfoArea(state.photo.user)),
-                      ],
-                    ),
-                  )
-                  // SliverFillRemaining(),
-                ],
-              );
-            }
-            return Container();
-          },
+        child: Stack(
+          children: [
+            BlocBuilder<PhotoDetailsBloc, PhotoDetailsState>(
+              builder: (context, state) {
+                if (state is PhotoDetailsLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is PhotoDetailsLoaded) {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverPersistentHeader(
+                        pinned: true,
+                        floating: true,
+                        delegate: SliverHeader(
+                          photo: state.photo,
+                          minExtent: 100,
+                          maxExtent: mediaQuery.size.width *
+                              (state.photo.height / state.photo.width),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            _buildMainInfoArea(state.photo),
+                            if (state.photo.exif.isAnyFieldNotNull())
+                              ContentArea(_buildExifArea(state.photo.exif)),
+                            if (state.photo.user.isAnyFieldNotNull())
+                              ContentArea(_buildUserInfoArea(state.photo.user)),
+                          ],
+                        ),
+                      )
+                      // SliverFillRemaining(),
+                    ],
+                  );
+                }
+                if (state is PhotoDetailsError) {
+                  return CenterErrorInfo(
+                    onButtonPressed: () {
+                      BlocProvider.of<PhotoDetailsBloc>(context).add(
+                        GetPhoto(id: widget.id),
+                      );
+                    },
+                  );
+                }
+                return Container();
+              },
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 40,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -232,43 +255,32 @@ class SliverHeader extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          child: Image.network(
-            photo.url.regular,
-            fit: BoxFit.fitWidth,
-            frameBuilder: (
-              BuildContext context,
-              Widget child,
-              int frame,
-              bool wasSynchronouslyLoaded,
-            ) {
-              return AnimatedCrossFade(
-                firstChild: Container(
-                  height: maxExtent,
-                  child: photo.blurHash != null ? BlurHash(hash: photo.blurHash) : Container(),
-                ),
-                secondChild: Container(width: double.infinity, child: child),
-                duration: const Duration(milliseconds: 500),
-                crossFadeState: frame == null
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-              );
-            },
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            size: 40,
-          ),
-        ),
-      ],
+    return Container(
+      width: double.infinity,
+      child: Image.network(
+        photo.url.regular,
+        fit: BoxFit.fitWidth,
+        frameBuilder: (
+          BuildContext context,
+          Widget child,
+          int frame,
+          bool wasSynchronouslyLoaded,
+        ) {
+          return AnimatedCrossFade(
+            firstChild: Container(
+              height: maxExtent,
+              child: photo.blurHash != null
+                  ? BlurHash(hash: photo.blurHash)
+                  : Container(),
+            ),
+            secondChild: Container(width: double.infinity, child: child),
+            duration: const Duration(milliseconds: 500),
+            crossFadeState: frame == null
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+          );
+        },
+      ),
     );
   }
 
