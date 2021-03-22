@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/photos/photos_bloc.dart';
+import '../../bloc/blocs.dart';
 import '../widgets/widgets.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,6 +32,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     BlocProvider.of<PhotosBloc>(context).add(GetPhotos());
+    BlocProvider.of<FavoritePhotosBloc>(context).add(GetFavoritePhotos());
   }
 
   @override

@@ -21,7 +21,7 @@ class PhotoDetailsLoaded extends PhotoDetailsState {
 class PhotoDetailsError extends PhotoDetailsState {
   final String message;
 
-  PhotoDetailsError({this.message});
+  const PhotoDetailsError({this.message});
 
   @override
   String toString() => 'PhotoDetailsError, message: $message';

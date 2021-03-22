@@ -6,7 +6,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:intl/intl.dart';
 
 import '../../configurable/asset_paths.dart';
-import '../../bloc/photo_details/photo_details_bloc.dart';
+import '../../bloc/blocs.dart';
 import '../../data/models/models.dart';
 import '../widgets/common/center_error_info.dart';
 
@@ -49,8 +49,8 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                         delegate: SliverHeader(
                           photo: state.photo,
                           minExtent: 100,
-                          maxExtent: mediaQuery.size.width *
-                              (state.photo.height / state.photo.width),
+                          maxExtent:
+                              mediaQuery.size.width * (state.photo.height / state.photo.width),
                         ),
                       ),
                       SliverToBoxAdapter(
@@ -161,10 +161,8 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Text('Social media'),
               Wrap(
                 children: [
-                  if (user.instagramUsername != null)
-                    SocialMediaIcon(AssetPaths.instagramLogo),
-                  if (user.twitterUsername != null)
-                    SocialMediaIcon(AssetPaths.twitterLogo),
+                  if (user.instagramUsername != null) SocialMediaIcon(AssetPaths.instagramLogo),
+                  if (user.twitterUsername != null) SocialMediaIcon(AssetPaths.twitterLogo),
                 ],
               )
             ],
@@ -255,33 +253,60 @@ class SliverHeader extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return Container(
-      width: double.infinity,
-      child: Image.network(
-        photo.url.regular,
-        fit: BoxFit.fitWidth,
-        frameBuilder: (
-          BuildContext context,
-          Widget child,
-          int frame,
-          bool wasSynchronouslyLoaded,
-        ) {
-          return AnimatedCrossFade(
-            firstChild: Container(
-              height: maxExtent,
-              child: photo.blurHash != null
-                  ? BlurHash(hash: photo.blurHash)
-                  : Container(),
-            ),
-            secondChild: Container(width: double.infinity, child: child),
-            duration: const Duration(milliseconds: 500),
-            crossFadeState: frame == null
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-          );
-        },
-      ),
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          child: Image.network(
+            photo.url.regular,
+            fit: BoxFit.fitWidth,
+            frameBuilder: (
+              BuildContext context,
+              Widget child,
+              int frame,
+              bool wasSynchronouslyLoaded,
+            ) {
+              return AnimatedCrossFade(
+                firstChild: Container(
+                  height: maxExtent,
+                  child: photo.blurHash != null ? BlurHash(hash: photo.blurHash) : Container(),
+                ),
+                secondChild: Container(width: double.infinity, child: child),
+                duration: const Duration(milliseconds: 500),
+                crossFadeState:
+                    frame == null ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+              );
+            },
+          ),
+        ),
+        Positioned(
+          bottom: 5,
+          right: 5,
+          child: BlocBuilder<FavoritePhotosBloc, FavoritePhotosState>(
+            builder: (context, state) {
+              if (state is FavoritePhotosLoaded) {
+                final isFavorite = _isFavorite(state.photos, photo.id);
+                return IconButton(
+                  icon: Icon(isFavorite ? Icons.star : Icons.star_border_outlined),
+                  onPressed: () {
+                    isFavorite
+                        ? BlocProvider.of<FavoritePhotosBloc>(context)
+                            .add(RemovePhotoFromFavorites(id: photo.id))
+                        : BlocProvider.of<FavoritePhotosBloc>(context)
+                            .add(AddPhotoToFavorites(photo: photo));
+                  },
+                );
+              }
+              return Container();
+            },
+          ),
+        ),
+      ],
     );
+  }
+
+  bool _isFavorite(List<Photo> favorites, String id) {
+    return ((favorites.singleWhere((it) => it.id == photo.id, orElse: () => null)) != null);
   }
 
   @override

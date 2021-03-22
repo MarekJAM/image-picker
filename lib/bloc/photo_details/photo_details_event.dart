@@ -11,3 +11,4 @@ class GetPhoto extends PhotoDetailsEvent {
   @override
   String toString() => 'GetPhoto, id: $id';
 }
+
