@@ -41,6 +41,7 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                   );
                 }
                 if (state is PhotoDetailsLoaded) {
+                  final maxExtent = mediaQuery.size.width * (state.photo.height / state.photo.width);
                   return CustomScrollView(
                     slivers: [
                       SliverPersistentHeader(
@@ -50,8 +51,7 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                           photo: state.photo,
                           isFavorite: state.isFavorite,
                           minExtent: 100,
-                          maxExtent:
-                              mediaQuery.size.width * (state.photo.height / state.photo.width),
+                          maxExtent: maxExtent > mediaQuery.size.height - 100 ? mediaQuery.size.height - 100 : maxExtent,
                         ),
                       ),
                       SliverToBoxAdapter(
