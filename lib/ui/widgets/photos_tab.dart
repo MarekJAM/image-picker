@@ -75,13 +75,11 @@ class _PhotosTabState extends State<PhotosTab> {
                   return RefreshIndicator(
                     onRefresh: () => getPhotos(page: 1),
                     child: StaggeredGridView.builder(
-                      gridDelegate:
-                          SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
+                      gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 100,
                         crossAxisSpacing: 5,
                         mainAxisSpacing: 5,
-                        staggeredTileBuilder: (int index) =>
-                            StaggeredTile.fit(2),
+                        staggeredTileBuilder: (int index) => StaggeredTile.fit(2),
                         staggeredTileCount: state.photos.length,
                       ),
                       controller: _scrollController,
@@ -96,8 +94,8 @@ class _PhotosTabState extends State<PhotosTab> {
                                   builder: (BuildContext context) {
                                     return BlocProvider(
                                       create: (context) => PhotoDetailsBloc(
-                                        photosRepository: RepositoryProvider.of<
-                                            PhotosRepository>(context),
+                                        photosRepository:
+                                            RepositoryProvider.of<PhotosRepository>(context),
                                       ),
                                       child: PhotoDetailsScreen(
                                         id: state.photos[index].id,
@@ -116,13 +114,9 @@ class _PhotosTabState extends State<PhotosTab> {
                                   height: 120,
                                   width: double.infinity,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.broken_image),
-                                      Text('Image unavailable')
-                                    ],
+                                    children: [Icon(Icons.broken_image), Text('Image unavailable')],
                                   ),
                                 );
                               },
@@ -134,7 +128,8 @@ class _PhotosTabState extends State<PhotosTab> {
                               ) {
                                 return AnimatedCrossFade(
                                   firstChild: AspectRatio(
-                                   aspectRatio: state.photos[index].width / state.photos[index].height,
+                                    aspectRatio:
+                                        state.photos[index].width / state.photos[index].height,
                                     child: state.photos[index].blurHash != null
                                         ? BlurHash(
                                             hash: state.photos[index].blurHash,
@@ -204,8 +199,7 @@ class _PhotosTabState extends State<PhotosTab> {
   }
 
   Future<void> getPhotos({int page}) async {
-    return BlocProvider.of<PhotosBloc>(context)
-        .add(GetPhotos(page: page, query: _searchQuery));
+    return BlocProvider.of<PhotosBloc>(context).add(GetPhotos(page: page, query: _searchQuery));
   }
 
   void _onScroll() {

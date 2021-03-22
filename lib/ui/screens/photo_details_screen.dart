@@ -287,7 +287,10 @@ class SliverHeader extends SliverPersistentHeaderDelegate {
               if (state is FavoritePhotosLoaded) {
                 final isFavorite = _isFavorite(state.photos, photo.id);
                 return IconButton(
-                  icon: Icon(isFavorite ? Icons.star : Icons.star_border_outlined),
+                  icon: Icon(
+                    isFavorite ? Icons.star : Icons.star_border_outlined,
+                    size: 30,
+                  ),
                   onPressed: () {
                     isFavorite
                         ? BlocProvider.of<FavoritePhotosBloc>(context)

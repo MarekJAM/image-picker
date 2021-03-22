@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+
 import 'package:intl/intl.dart';
 
-import '../../bloc/favorite_photos/favorite_photos_bloc.dart';
+import '../../data/repositories/photos_repository.dart';
+import '../../ui/screens/photo_details_screen.dart';
+import '../../bloc/blocs.dart';
 
 class FavoritesTab extends StatelessWidget {
   @override
@@ -33,74 +36,94 @@ class FavoritesTab extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Icon(Icons.cancel),
                     ),
-                    child: Card(
-                      child: Container(
-                        height: 120,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Image.network(
-                                state.photos[i].url.thumb,
-                                fit: BoxFit.fitWidth,
-                                frameBuilder: (
-                                  BuildContext context,
-                                  Widget child,
-                                  int frame,
-                                  bool wasSynchronouslyLoaded,
-                                ) {
-                                  return AnimatedCrossFade(
-                                    firstChild: Container(
-                                      height: 120,
-                                      child: state.photos[i].blurHash != null
-                                          ? BlurHash(
-                                              hash: state.photos[i].blurHash,
-                                              imageFit: BoxFit.fill,
-                                            )
-                                          : Container(),
-                                    ),
-                                    secondChild: Container(
-                                      width: double.infinity,
-                                      child: child,
-                                    ),
-                                    duration: const Duration(milliseconds: 500),
-                                    crossFadeState: frame == null
-                                        ? CrossFadeState.showFirst
-                                        : CrossFadeState.showSecond,
-                                  );
-                                },
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      state.photos[i].user.name,
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                        'Created: ${DateFormat('yyyy-MM-dd').format(state.photos[i].createdAt)}'),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    if (state.photos[i].description != null)
-                                      Expanded(
-                                        child: Text(
-                                          state.photos[i].description,
-                                          overflow: TextOverflow.fade,
-                                        ),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return BlocProvider(
+                                create: (context) => PhotoDetailsBloc(
+                                  photosRepository:
+                                      RepositoryProvider.of<PhotosRepository>(context),
+                                ),
+                                child: PhotoDetailsScreen(
+                                  id: state.photos[i].id,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Card(
+                        child: Container(
+                          height: 120,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Image.network(
+                                  state.photos[i].url.thumb,
+                                  fit: BoxFit.fitWidth,
+                                  frameBuilder: (
+                                    BuildContext context,
+                                    Widget child,
+                                    int frame,
+                                    bool wasSynchronouslyLoaded,
+                                  ) {
+                                    return AnimatedCrossFade(
+                                      firstChild: Container(
+                                        height: 120,
+                                        child: state.photos[i].blurHash != null
+                                            ? BlurHash(
+                                                hash: state.photos[i].blurHash,
+                                                imageFit: BoxFit.fill,
+                                              )
+                                            : Container(),
                                       ),
-                                  ],
+                                      secondChild: Container(
+                                        width: double.infinity,
+                                        child: child,
+                                      ),
+                                      duration: const Duration(milliseconds: 500),
+                                      crossFadeState: frame == null
+                                          ? CrossFadeState.showFirst
+                                          : CrossFadeState.showSecond,
+                                    );
+                                  },
                                 ),
                               ),
-                            )
-                          ],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        state.photos[i].user.name,
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                          'Created: ${DateFormat('yyyy-MM-dd').format(state.photos[i].createdAt)}'),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      if (state.photos[i].description != null)
+                                        Expanded(
+                                          child: Text(
+                                            state.photos[i].description,
+                                            overflow: TextOverflow.fade,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
