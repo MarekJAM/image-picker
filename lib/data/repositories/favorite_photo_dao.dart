@@ -25,9 +25,9 @@ class FavoritePhotosDao {
     if (query != null) {
       if (query.isNotEmpty)
         result = await db.query(favoritePhotosTable,
-            columns: columns, where: 'user_name LIKE ?', whereArgs: ["%$query%"]);
+            columns: columns, where: 'user_name LIKE ?', whereArgs: ["%$query%"], orderBy: 'id DESC');
     } else {
-      result = await db.query(favoritePhotosTable, columns: columns);
+      result = await db.query(favoritePhotosTable, columns: columns, orderBy: 'id DESC');
     }
 
     List<Photo> photos = result.isNotEmpty ? result.map((item) => Photo.fromDb(item)).toList() : [];

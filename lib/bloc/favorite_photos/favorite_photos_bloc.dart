@@ -49,7 +49,7 @@ class FavoritePhotosBloc extends Bloc<FavoritePhotosEvent, FavoritePhotosState> 
 
         if (result > 0) {
           final List<Photo> updatedPhotos = List.from((state as FavoritePhotosLoaded).photos)
-            ..add(event.photo);
+            ..insert(0, event.photo);
 
           yield FavoritePhotosLoaded(photos: updatedPhotos);
         }
