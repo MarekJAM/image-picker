@@ -78,10 +78,10 @@ class _PhotosTabState extends State<PhotosTab> {
                     onRefresh: () => getPhotos(page: 1),
                     child: StaggeredGridView.builder(
                       gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 100,
+                        maxCrossAxisExtent: mediaQuery.size.width / (mediaQuery.orientation == Orientation.landscape ? 4 : 2),
                         crossAxisSpacing: 5,
                         mainAxisSpacing: 5,
-                        staggeredTileBuilder: (int index) => StaggeredTile.fit(2),
+                        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
                         staggeredTileCount: state.photos.length,
                       ),
                       controller: _scrollController,

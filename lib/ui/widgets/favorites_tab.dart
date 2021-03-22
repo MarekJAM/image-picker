@@ -13,6 +13,7 @@ import '../../bloc/blocs.dart';
 class FavoritesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
     return BlocBuilder<FavoritePhotosBloc, FavoritePhotosState>(
       builder: (context, state) {
         if (state is FavoritePhotosLoading) {
@@ -21,11 +22,12 @@ class FavoritesTab extends StatelessWidget {
           );
         } else if (state is FavoritePhotosLoaded) {
           return state.photos.length > 0
-              ? ListView.builder(
+              ? GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 3, crossAxisCount: mediaQuery.orientation == Orientation.landscape ? 2 : 1),
                   itemCount: state.photos.length,
                   itemBuilder: (context, i) => Dismissible(
                     key: Key(state.photos[i].id),
-                    onDismissed: (dir) {
+                    onDismissed: (_) {
                       BlocProvider.of<FavoritePhotosBloc>(context).add(
                         RemovePhotoFromFavorites(id: state.photos[i].id),
                       );
@@ -61,7 +63,6 @@ class FavoritesTab extends StatelessWidget {
                       },
                       child: Card(
                         child: Container(
-                          height: 120,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
