@@ -70,7 +70,23 @@ class App extends StatelessWidget {
           title: 'Image Picker',
           theme: ThemeData(
             brightness: Brightness.dark,
-            primarySwatch: Colors.blue,
+            accentColor: Color(0xffff7844),
+            scaffoldBackgroundColor: Color(0xff414141),
+            cardColor: Color(0xff525252),
+            buttonTheme: ButtonThemeData(buttonColor: Color(0xffF34213)),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Color(0xffF34213),
+                ),
+              ),
+            ),
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              backgroundColor: Color(0xff313131),
+              selectedIconTheme: IconThemeData(
+                color: Color(0xffff7844),
+              ),
+            ),
           ),
           home: MainScreen(title: 'Image Picker'),
         ),

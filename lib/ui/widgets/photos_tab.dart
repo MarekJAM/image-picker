@@ -32,12 +32,12 @@ class _PhotosTabState extends State<PhotosTab> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
+    return Column(
+      children: [
+        Container(
+          color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -66,7 +66,10 @@ class _PhotosTabState extends State<PhotosTab> {
               },
             ),
           ),
-          Expanded(
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: BlocBuilder<PhotosBloc, PhotosState>(
               builder: (context, state) {
                 if (state is PhotosLoading) {
@@ -78,7 +81,8 @@ class _PhotosTabState extends State<PhotosTab> {
                     onRefresh: () => getPhotos(page: 1),
                     child: StaggeredGridView.builder(
                       gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: mediaQuery.size.width / (mediaQuery.orientation == Orientation.landscape ? 4 : 2),
+                        maxCrossAxisExtent: mediaQuery.size.width /
+                            (mediaQuery.orientation == Orientation.landscape ? 4 : 2),
                         crossAxisSpacing: 5,
                         mainAxisSpacing: 5,
                         staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
@@ -99,8 +103,7 @@ class _PhotosTabState extends State<PhotosTab> {
                                         photosRepository:
                                             RepositoryProvider.of<PhotosRepository>(context),
                                         favoritePhotosRepository:
-                                            RepositoryProvider.of<FavoritePhotosRepository>(
-                                                context),
+                                            RepositoryProvider.of<FavoritePhotosRepository>(context),
                                         favoritePhotosBloc:
                                             BlocProvider.of<FavoritePhotosBloc>(context),
                                       ),
@@ -194,8 +197,8 @@ class _PhotosTabState extends State<PhotosTab> {
               },
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
