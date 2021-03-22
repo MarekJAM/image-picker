@@ -130,12 +130,15 @@ class FavoritesTab extends StatelessWidget {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      if (state.photos[i].description != null)
-                                        Expanded(
-                                          child: Text(state.photos[i].description,
-                                              overflow: TextOverflow.fade,
-                                              style: TextStyle(fontSize: 12)),
+                                      Expanded(
+                                        child: Text(
+                                          state.photos[i].description ??
+                                              state.photos[i].altDescription ??
+                                              '',
+                                          overflow: TextOverflow.fade,
+                                          style: TextStyle(fontSize: 12),
                                         ),
+                                      )
                                     ],
                                   ),
                                 ),

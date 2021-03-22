@@ -39,6 +39,7 @@ class DatabaseProvider {
     await database.execute("CREATE TABLE $favoritePhotosTable ("
         "id INTEGER PRIMARY KEY, "
         "photo_id TEXT NOT NULL UNIQUE, "
+        "alt_description TEXT, "
         "user_name TEXT NOT NULL, "
         "created_at TEXT NOT NULL, "
         "thumb_url TEXT NOT NULL, "

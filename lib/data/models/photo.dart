@@ -4,6 +4,7 @@ import 'models.dart';
 
 class Photo {
   final String id;
+  final String altDescription;
   final DateTime createdAt;
   final int height;
   final int width;
@@ -16,6 +17,7 @@ class Photo {
 
   const Photo({
     @required this.id,
+    this.altDescription,
     this.createdAt,
     this.height,
     this.width,
@@ -29,6 +31,7 @@ class Photo {
 
   factory Photo.fromJson(Map<String, dynamic> data) => Photo(
         id: data['id'],
+        altDescription: data['alt_description'],
         createdAt: DateTime.parse(data['created_at']),
         height: data['height'],
         width: data['width'],
@@ -42,6 +45,7 @@ class Photo {
 
   factory Photo.fromDb(Map<String, dynamic> data) => Photo(
     id: data['photo_id'],
+    altDescription: data['alt_description'],
     createdAt: DateTime.parse(data['created_at']),
     user: User(name: data['user_name']),
     description: data['description'],
@@ -51,6 +55,7 @@ class Photo {
 
   Map<String, dynamic> toMap() => {
     "photo_id": id,
+    "alt_description": altDescription,
     "user_name": user.name,
     "created_at": createdAt.toIso8601String(),
     "description": description,
