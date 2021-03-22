@@ -5,6 +5,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 
 import 'package:intl/intl.dart';
 
+import '../../data/repositories/favorite_photos_repository.dart';
 import '../../data/repositories/photos_repository.dart';
 import '../../ui/screens/photo_details_screen.dart';
 import '../../bloc/blocs.dart';
@@ -46,6 +47,9 @@ class FavoritesTab extends StatelessWidget {
                                 create: (context) => PhotoDetailsBloc(
                                   photosRepository:
                                       RepositoryProvider.of<PhotosRepository>(context),
+                                  favoritePhotosRepository:
+                                      RepositoryProvider.of<FavoritePhotosRepository>(context),
+                                  favoritePhotosBloc: BlocProvider.of<FavoritePhotosBloc>(context),
                                 ),
                                 child: PhotoDetailsScreen(
                                   id: state.photos[i].id,

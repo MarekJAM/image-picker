@@ -10,7 +10,8 @@ class FavoritePhotosDao {
 
   Future<int> insertFavoritePhoto({@required Photo photo}) async {
     final db = await dbProvider.database;
-    var result = db.insert(favoritePhotosTable, photo.toMap());
+    var result = await db.insert(favoritePhotosTable, photo.toMap());
+
     return result;
   }
 
@@ -24,34 +25,39 @@ class FavoritePhotosDao {
     if (query != null) {
       if (query.isNotEmpty)
         result = await db.query(favoritePhotosTable,
-            columns: columns,
-            where: 'user_name LIKE ?',
-            whereArgs: ["%$query%"]);
+            columns: columns, where: 'user_name LIKE ?', whereArgs: ["%$query%"]);
     } else {
       result = await db.query(favoritePhotosTable, columns: columns);
     }
 
-    List<Photo> photos = result.isNotEmpty
-        ? result.map((item) => Photo.fromDb(item)).toList()
-        : [];
+    List<Photo> photos = result.isNotEmpty ? result.map((item) => Photo.fromDb(item)).toList() : [];
     return photos;
   }
 
   Future<int> updateFavoritePhoto({@required Photo photo}) async {
     final db = await dbProvider.database;
 
-    var result = await db.update(favoritePhotosTable, photo.toMap(),
-        where: "photo_id = ?", whereArgs: [photo.id]);
+    var result = await db
+        .update(favoritePhotosTable, photo.toMap(), where: "photo_id = ?", whereArgs: [photo.id]);
 
     return result;
   }
 
-
   Future<int> deleteFavoritePhoto({@required String id}) async {
     final db = await dbProvider.database;
-    var result = await db
-        .delete(favoritePhotosTable, where: 'photo_id = ?', whereArgs: [id]);
+    var result = await db.delete(favoritePhotosTable, where: 'photo_id = ?', whereArgs: [id]);
 
     return result;
+  }
+
+  Future<bool> isPhotoFavorite({
+    String id,
+  }) async {
+    final db = await dbProvider.database;
+
+    List<Map<String, dynamic>> result;
+    result = await db.query(favoritePhotosTable, where: 'photo_id = ?', whereArgs: [id]);
+
+    return result.length > 0;
   }
 }

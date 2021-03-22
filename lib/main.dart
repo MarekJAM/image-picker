@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/blocs.dart';
 import 'data/repositories/favorite_photo_dao.dart';
 import 'data/repositories/photos_api_client.dart';
-
 import 'ui/screens/screens.dart';
 import 'bloc/simple_bloc_observer.dart';
 import 'data/repositories/repositories.dart';
@@ -45,15 +44,26 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => photosRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => photosRepository,
+        ),
+        RepositoryProvider(
+          create: (context) => favoritePhotosRepository,
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => PhotosBloc(photosRepository: photosRepository),
+            create: (context) => PhotosBloc(
+              photosRepository: photosRepository,
+            ),
           ),
           BlocProvider(
-            create: (context) => FavoritePhotosBloc(favoritePhotosRepository: favoritePhotosRepository),
+            create: (context) => FavoritePhotosBloc(
+              favoritePhotosRepository: favoritePhotosRepository,
+            ),
           ),
         ],
         child: MaterialApp(

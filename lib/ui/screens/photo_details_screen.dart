@@ -48,6 +48,7 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
                         floating: true,
                         delegate: SliverHeader(
                           photo: state.photo,
+                          isFavorite: state.isFavorite,
                           minExtent: 100,
                           maxExtent:
                               mediaQuery.size.width * (state.photo.height / state.photo.width),
@@ -239,10 +240,13 @@ class TextDataRow extends StatelessWidget {
 
 class SliverHeader extends SliverPersistentHeaderDelegate {
   final Photo photo;
+  final bool isFavorite;
   final double minExtent;
   final double maxExtent;
+
   SliverHeader({
     @required this.photo,
+    @required this.isFavorite,
     this.minExtent,
     @required this.maxExtent,
   });
@@ -282,34 +286,22 @@ class SliverHeader extends SliverPersistentHeaderDelegate {
         Positioned(
           bottom: 5,
           right: 5,
-          child: BlocBuilder<FavoritePhotosBloc, FavoritePhotosState>(
-            builder: (context, state) {
-              if (state is FavoritePhotosLoaded) {
-                final isFavorite = _isFavorite(state.photos, photo.id);
-                return IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.star : Icons.star_border_outlined,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    isFavorite
-                        ? BlocProvider.of<FavoritePhotosBloc>(context)
-                            .add(RemovePhotoFromFavorites(id: photo.id))
-                        : BlocProvider.of<FavoritePhotosBloc>(context)
-                            .add(AddPhotoToFavorites(photo: photo));
-                  },
-                );
-              }
-              return Container();
+          child: IconButton(
+            icon: Icon(
+              isFavorite ? Icons.star : Icons.star_border_outlined,
+              size: 30,
+            ),
+            onPressed: () {
+              isFavorite
+                  ? BlocProvider.of<FavoritePhotosBloc>(context)
+                      .add(RemovePhotoFromFavorites(id: photo.id))
+                  : BlocProvider.of<FavoritePhotosBloc>(context)
+                      .add(AddPhotoToFavorites(photo: photo));
             },
           ),
         ),
       ],
     );
-  }
-
-  bool _isFavorite(List<Photo> favorites, String id) {
-    return ((favorites.singleWhere((it) => it.id == photo.id, orElse: () => null)) != null);
   }
 
   @override

@@ -22,7 +22,11 @@ class FavoritePhotosRepository {
     return await favoritePhotosDao.deleteFavoritePhoto(id: photo.id);
   }
 
-  Future<int> removePhotoFromFavorites({@required id}) async {
+  Future<int> removePhotoFromFavorites({@required String id}) async {
     return await favoritePhotosDao.deleteFavoritePhoto(id: id);
+  }
+
+  Future<bool> isPhotoFavorite({@required String id}) async {
+    return await favoritePhotosDao.isPhotoFavorite(id: id);
   }
 }

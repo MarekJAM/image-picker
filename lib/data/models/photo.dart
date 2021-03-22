@@ -43,10 +43,10 @@ class Photo {
   factory Photo.fromDb(Map<String, dynamic> data) => Photo(
     id: data['photo_id'],
     createdAt: DateTime.parse(data['created_at']),
-    user: User.fromJson({"name": data['user_name']}),
+    user: User(name: data['user_name']),
     description: data['description'],
     blurHash: data['blur_hash'],
-    url: Url.fromJson({"thumb": data['thumb_url']}),
+    url: Url(thumb: data['thumb_url']),
   );
 
   Map<String, dynamic> toMap() => {

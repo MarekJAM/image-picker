@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../bloc/blocs.dart';
+import '../../data/repositories/repositories.dart';
 import '../../bloc/photo_details/photo_details_bloc.dart';
 import '../../data/repositories/photos_repository.dart';
 import '../../ui/screens/photo_details_screen.dart';
@@ -96,6 +98,11 @@ class _PhotosTabState extends State<PhotosTab> {
                                       create: (context) => PhotoDetailsBloc(
                                         photosRepository:
                                             RepositoryProvider.of<PhotosRepository>(context),
+                                        favoritePhotosRepository:
+                                            RepositoryProvider.of<FavoritePhotosRepository>(
+                                                context),
+                                        favoritePhotosBloc:
+                                            BlocProvider.of<FavoritePhotosBloc>(context),
                                       ),
                                       child: PhotoDetailsScreen(
                                         id: state.photos[index].id,
