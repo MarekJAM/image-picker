@@ -5,10 +5,10 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 
 import 'package:intl/intl.dart';
 
-import '../../data/repositories/favorite_photos_repository.dart';
-import '../../data/repositories/photos_repository.dart';
-import '../../ui/screens/photo_details_screen.dart';
-import '../../bloc/blocs.dart';
+import '../../../data/repositories/favorite_photos_repository.dart';
+import '../../../data/repositories/photos_repository.dart';
+import '../../screens/photo_details_screen.dart';
+import '../../../bloc/blocs.dart';
 
 class FavoritesTab extends StatelessWidget {
   @override

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:intl/intl.dart';
 
 import '../../configurable/asset_paths.dart';
 import '../../bloc/blocs.dart';
 import '../../data/models/models.dart';
+import '../widgets/photo_details/photo_details_widgets.dart';
 import '../widgets/common/center_error_info.dart';
 
 class PhotoDetailsScreen extends StatefulWidget {
@@ -162,150 +162,13 @@ class _PhotoDetailsScreenState extends State<PhotoDetailsScreen> {
               Text('Social media'),
               Wrap(
                 children: [
-                  if (user.instagramUsername != null) SocialMediaIcon(AssetPaths.instagramLogo),
-                  if (user.twitterUsername != null) SocialMediaIcon(AssetPaths.twitterLogo),
+                  if (user.instagramUsername != null) SocialMediaIconArea(AssetPaths.instagramLogo),
+                  if (user.twitterUsername != null) SocialMediaIconArea(AssetPaths.twitterLogo),
                 ],
               )
             ],
           ),
       ],
     );
-  }
-}
-
-class ContentArea extends StatelessWidget {
-  final Widget content;
-
-  ContentArea(this.content);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Divider(),
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: content,
-        ),
-      ],
-    );
-  }
-}
-
-class SocialMediaIcon extends StatelessWidget {
-  final String path;
-
-  SocialMediaIcon(this.path);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 2.0),
-      child: Container(
-        height: 15,
-        child: Image.asset(path),
-      ),
-    );
-  }
-}
-
-class TextDataRow extends StatelessWidget {
-  final String title;
-  final dynamic value;
-
-  TextDataRow({@required this.title, @required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return value != null
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 18.0),
-                child: Text(title),
-              ),
-              Expanded(
-                child: Text(
-                  '$value',
-                  textAlign: TextAlign.end,
-                ),
-              ),
-            ],
-          )
-        : Container();
-  }
-}
-
-class SliverHeader extends SliverPersistentHeaderDelegate {
-  final Photo photo;
-  final bool isFavorite;
-  final double minExtent;
-  final double maxExtent;
-
-  SliverHeader({
-    @required this.photo,
-    @required this.isFavorite,
-    this.minExtent,
-    @required this.maxExtent,
-  });
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          child: Image.network(
-            photo.url.regular,
-            fit: BoxFit.fitWidth,
-            frameBuilder: (
-              BuildContext context,
-              Widget child,
-              int frame,
-              bool wasSynchronouslyLoaded,
-            ) {
-              return AnimatedCrossFade(
-                firstChild: Container(
-                  height: maxExtent,
-                  child: photo.blurHash != null ? BlurHash(hash: photo.blurHash) : Container(),
-                ),
-                secondChild: Container(width: double.infinity, child: child),
-                duration: const Duration(milliseconds: 500),
-                crossFadeState:
-                    frame == null ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-              );
-            },
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          right: 5,
-          child: IconButton(
-            icon: Icon(
-              isFavorite ? Icons.star : Icons.star_border_outlined,
-              size: 30,
-            ),
-            onPressed: () {
-              isFavorite
-                  ? BlocProvider.of<FavoritePhotosBloc>(context)
-                      .add(RemovePhotoFromFavorites(id: photo.id))
-                  : BlocProvider.of<FavoritePhotosBloc>(context)
-                      .add(AddPhotoToFavorites(photo: photo));
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
   }
 }

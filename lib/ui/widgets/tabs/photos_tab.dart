@@ -4,13 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import '../../bloc/blocs.dart';
-import '../../data/repositories/repositories.dart';
-import '../../bloc/photo_details/photo_details_bloc.dart';
-import '../../data/repositories/photos_repository.dart';
-import '../../ui/screens/photo_details_screen.dart';
-import '../../bloc/photos/photos_bloc.dart';
-import 'widgets.dart';
+import '../../../bloc/blocs.dart';
+import '../../../data/repositories/repositories.dart';
+import '../../../bloc/photo_details/photo_details_bloc.dart';
+import '../../../data/repositories/photos_repository.dart';
+import '../../screens/photo_details_screen.dart';
+import '../../../bloc/photos/photos_bloc.dart';
+import '../photos/photos_widgets.dart';
+import '../common/common_widgets.dart';
 
 class PhotosTab extends StatefulWidget {
   @override
@@ -165,31 +166,7 @@ class _PhotosTabState extends State<PhotosTab> {
                                     },
                                   ),
                                 ),
-                                Positioned(
-                                  bottom: 3,
-                                  left: 3,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[700].withOpacity(0.5),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 2,
-                                      ),
-                                      child: Text(
-                                        state.photos[index].user.name,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                UsernameLabel(name: state.photos[index].user.name)
                               ],
                             ),
                           ),
