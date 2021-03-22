@@ -46,6 +46,7 @@ class _PhotosTabState extends State<PhotosTab> {
                   onPressed: () {
                     _searchQuery = _searchController.text;
                     getPhotos(page: 1);
+                    FocusScope.of(context).unfocus();
                   },
                 ),
                 suffixIcon: IconButton(
@@ -77,117 +78,131 @@ class _PhotosTabState extends State<PhotosTab> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is PhotosLoaded) {
-                  return RefreshIndicator(
-                    onRefresh: () => getPhotos(page: 1),
-                    child: StaggeredGridView.builder(
-                      gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: mediaQuery.size.width /
-                            (mediaQuery.orientation == Orientation.landscape ? 4 : 2),
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-                        staggeredTileCount: state.photos.length,
-                      ),
-                      controller: _scrollController,
-                      itemCount: state.photos.length,
-                      itemBuilder: (BuildContext context, int index) => Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return BlocProvider(
-                                      create: (context) => PhotoDetailsBloc(
-                                        photosRepository:
-                                            RepositoryProvider.of<PhotosRepository>(context),
-                                        favoritePhotosRepository:
-                                            RepositoryProvider.of<FavoritePhotosRepository>(context),
-                                        favoritePhotosBloc:
-                                            BlocProvider.of<FavoritePhotosBloc>(context),
-                                      ),
-                                      child: PhotoDetailsScreen(
-                                        id: state.photos[index].id,
+                  return state.photos.length > 0
+                      ? RefreshIndicator(
+                          onRefresh: () => getPhotos(page: 1),
+                          child: StaggeredGridView.builder(
+                            gridDelegate: SliverStaggeredGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: mediaQuery.size.width /
+                                  (mediaQuery.orientation == Orientation.landscape ? 4 : 2),
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5,
+                              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+                              staggeredTileCount: state.photos.length,
+                            ),
+                            controller: _scrollController,
+                            itemCount: state.photos.length,
+                            itemBuilder: (BuildContext context, int index) => Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return BlocProvider(
+                                            create: (context) => PhotoDetailsBloc(
+                                              photosRepository:
+                                                  RepositoryProvider.of<PhotosRepository>(context),
+                                              favoritePhotosRepository:
+                                                  RepositoryProvider.of<FavoritePhotosRepository>(
+                                                      context),
+                                              favoritePhotosBloc:
+                                                  BlocProvider.of<FavoritePhotosBloc>(context),
+                                            ),
+                                            child: PhotoDetailsScreen(
+                                              id: state.photos[index].id,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     );
                                   },
+                                  child: Image.network(
+                                    state.photos[index].url.thumb,
+                                    fit: BoxFit.fitWidth,
+                                    errorBuilder: (context, exception, stackTrace) {
+                                      return Container(
+                                        color: Colors.black38,
+                                        height: 120,
+                                        width: double.infinity,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.broken_image),
+                                            Text('Image unavailable')
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    frameBuilder: (
+                                      BuildContext context,
+                                      Widget child,
+                                      int frame,
+                                      bool wasSynchronouslyLoaded,
+                                    ) {
+                                      return AnimatedCrossFade(
+                                        firstChild: AspectRatio(
+                                          aspectRatio: state.photos[index].width /
+                                              state.photos[index].height,
+                                          child: state.photos[index].blurHash != null
+                                              ? BlurHash(
+                                                  hash: state.photos[index].blurHash,
+                                                  imageFit: BoxFit.fill,
+                                                )
+                                              : Container(),
+                                        ),
+                                        secondChild: Container(
+                                          width: double.infinity,
+                                          child: child,
+                                        ),
+                                        duration: const Duration(milliseconds: 500),
+                                        crossFadeState: frame == null
+                                            ? CrossFadeState.showFirst
+                                            : CrossFadeState.showSecond,
+                                      );
+                                    },
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Image.network(
-                              state.photos[index].url.thumb,
-                              fit: BoxFit.fitWidth,
-                              errorBuilder: (context, exception, stackTrace) {
-                                return Container(
-                                  color: Colors.black38,
-                                  height: 120,
-                                  width: double.infinity,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [Icon(Icons.broken_image), Text('Image unavailable')],
+                                Positioned(
+                                  bottom: 3,
+                                  left: 3,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[700].withOpacity(0.5),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                        vertical: 2,
+                                      ),
+                                      child: Text(
+                                        state.photos[index].user.name,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ),
-                                );
-                              },
-                              frameBuilder: (
-                                BuildContext context,
-                                Widget child,
-                                int frame,
-                                bool wasSynchronouslyLoaded,
-                              ) {
-                                return AnimatedCrossFade(
-                                  firstChild: AspectRatio(
-                                    aspectRatio:
-                                        state.photos[index].width / state.photos[index].height,
-                                    child: state.photos[index].blurHash != null
-                                        ? BlurHash(
-                                            hash: state.photos[index].blurHash,
-                                            imageFit: BoxFit.fill,
-                                          )
-                                        : Container(),
-                                  ),
-                                  secondChild: Container(
-                                    width: double.infinity,
-                                    child: child,
-                                  ),
-                                  duration: const Duration(milliseconds: 500),
-                                  crossFadeState: frame == null
-                                      ? CrossFadeState.showFirst
-                                      : CrossFadeState.showSecond,
-                                );
-                              },
+                                ),
+                              ],
                             ),
                           ),
-                          Positioned(
-                            bottom: 3,
-                            left: 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[700].withOpacity(0.5),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                  vertical: 2,
-                                ),
-                                child: Text(
-                                  state.photos[index].user.name,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image, size: 45),
+                              Text('Looks like no image was found.\nTry different search phrase.', textAlign: TextAlign.center,),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
+                        );
                 } else if (state is PhotosError) {
                   return CenterErrorInfo(
                     onButtonPressed: getPhotos,
