@@ -23,7 +23,9 @@ class FavoritesTab extends StatelessWidget {
         } else if (state is FavoritePhotosLoaded) {
           return state.photos.length > 0
               ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 3, crossAxisCount: mediaQuery.orientation == Orientation.landscape ? 2 : 1),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 3,
+                      crossAxisCount: mediaQuery.orientation == Orientation.landscape ? 2 : 1),
                   itemCount: state.photos.length,
                   itemBuilder: (context, i) => Dismissible(
                     key: Key(state.photos[i].id),
@@ -100,7 +102,8 @@ class FavoritesTab extends StatelessWidget {
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
+                                  padding:
+                                      const EdgeInsets.only(top: 6, right: 4, bottom: 4, left: 6),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -111,17 +114,27 @@ class FavoritesTab extends StatelessWidget {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text(
-                                          'Created: ${DateFormat('yyyy-MM-dd').format(state.photos[i].createdAt)}'),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.calendar_today,
+                                            size: 16,
+                                          ),
+                                          SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                              '${DateFormat('yyyy-MM-dd').format(state.photos[i].createdAt)}'),
+                                        ],
+                                      ),
                                       SizedBox(
                                         height: 5,
                                       ),
                                       if (state.photos[i].description != null)
                                         Expanded(
-                                          child: Text(
-                                            state.photos[i].description,
-                                            overflow: TextOverflow.fade,
-                                          ),
+                                          child: Text(state.photos[i].description,
+                                              overflow: TextOverflow.fade,
+                                              style: TextStyle(fontSize: 12)),
                                         ),
                                     ],
                                   ),
