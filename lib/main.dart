@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'bloc/blocs.dart';
 import 'data/repositories/favorite_photo_dao.dart';
@@ -19,8 +18,6 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(debug: true);
-
-  await Permission.storage.request();
 
   final photosRepository = PhotosRepository(
     photosApiClient: PhotosApiClient(

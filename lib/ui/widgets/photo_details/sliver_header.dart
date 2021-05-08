@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../data/models/models.dart';
@@ -99,7 +97,6 @@ class DownloadButton extends StatefulWidget {
 }
 
 class _DownloadButtonState extends State<DownloadButton> {
-  static const debug = true;
   ReceivePort _port = ReceivePort();
 
   @override
@@ -109,6 +106,12 @@ class _DownloadButtonState extends State<DownloadButton> {
     _bindBackgroundIsolate();
 
     FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _unbindBackgroundIsolate();
   }
 
   static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
@@ -123,12 +126,6 @@ class _DownloadButtonState extends State<DownloadButton> {
       _bindBackgroundIsolate();
       return;
     }
-
-    _port.listen((dynamic data) {
-      if (debug) {
-        print('UI Isolate Callback: $data');
-      }
-    });
   }
 
   void _unbindBackgroundIsolate() {
@@ -149,8 +146,10 @@ class _DownloadButtonState extends State<DownloadButton> {
           final path =
               await ExtStorage.getExternalStoragePublicDirectory(ExtStorage.DIRECTORY_DOWNLOADS);
 
+          await Permission.storage.request();
+
           if (await Permission.storage.request().isGranted) {
-            final taskId = await FlutterDownloader.enqueue(
+            await FlutterDownloader.enqueue(
               url: widget.photo.downloadUrl,
               savedDir: path,
               showNotification: true,
