@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'bloc/blocs.dart';
 import 'data/repositories/favorite_photo_dao.dart';
@@ -10,10 +12,15 @@ import 'ui/screens/screens.dart';
 import 'bloc/simple_bloc_observer.dart';
 import 'data/repositories/repositories.dart';
 
-void main() {
+void main() async {
   if (kDebugMode) {
     Bloc.observer = SimpleBlocObserver();
   }
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: true);
+
+  await Permission.storage.request();
 
   final photosRepository = PhotosRepository(
     photosApiClient: PhotosApiClient(

@@ -10,6 +10,7 @@ class Photo {
   final int width;
   final String blurHash;
   final String description;
+  final String downloadUrl;
   final User user;
   final Url url;
   final Exif exif;
@@ -23,6 +24,7 @@ class Photo {
     this.width,
     this.blurHash,
     this.description,
+    this.downloadUrl,
     this.user,
     this.url,
     this.exif,
@@ -37,6 +39,7 @@ class Photo {
         width: data['width'],
         blurHash: data['blur_hash'],
         description: data['description'],
+        downloadUrl: data['links'] != null ? data['links']['download'] : null,
         user: data['user'] != null ? User.fromJson(data['user']) : null,
         url: data['urls'] != null ? Url.fromJson(data['urls']) : null,
         exif: data['exif'] != null ? Exif.fromJson(data['exif']) : null,
