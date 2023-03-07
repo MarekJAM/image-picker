@@ -24,7 +24,7 @@ class PhotosApiClient {
     final url =
         '$baseUrl/photos/?per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
-    final response = await httpClient.get(url, headers: headers);
+    final response = await httpClient.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception();
@@ -41,7 +41,7 @@ class PhotosApiClient {
     final url =
         '$baseUrl/search/photos/?query=$query&per_page=${ApiConfig.pageSize}&page=${(page ?? 1)}';
 
-    final response = await httpClient.get(url, headers: headers);
+    final response = await httpClient.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception();
@@ -59,7 +59,7 @@ class PhotosApiClient {
     final url =
         '$baseUrl/photos/$id';
 
-    final response = await httpClient.get(url, headers: headers);
+    final response = await httpClient.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception();

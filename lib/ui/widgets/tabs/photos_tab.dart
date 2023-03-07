@@ -6,10 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../../bloc/blocs.dart';
 import '../../../data/repositories/repositories.dart';
-import '../../../bloc/photo_details/photo_details_bloc.dart';
-import '../../../data/repositories/photos_repository.dart';
 import '../../screens/photo_details_screen.dart';
-import '../../../bloc/photos/photos_bloc.dart';
 import '../photos/photos_widgets.dart';
 import '../common/common_widgets.dart';
 
